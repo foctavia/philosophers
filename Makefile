@@ -14,7 +14,7 @@ RED = "\033[1;31m"
 GREEN = "\033[1;32m"
 RESET = "\033[m"
 
-NAME = philosophers
+NAME = philo
 
 CC = cc
 
@@ -27,7 +27,7 @@ RM = rm -rf
 SRCDIR = src/
 OBJDIR = obj/
 
-SRC = philosophers.c
+SRC = philo.c
 
 # BONUS = 
 
