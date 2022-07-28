@@ -27,7 +27,7 @@ RM = rm -rf
 SRCDIR = src/
 OBJDIR = obj/
 
-SRC = philo.c
+SRC = philo.c philo_utils.c
 
 # BONUS = 
 
@@ -43,7 +43,7 @@ $(OBJDIR)%.o : $(SRCDIR)%.c
 		$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 $(NAME) : $(P_OBJ)
-		@echo -n "Compiling pipex"
+		@echo -n "Compiling philo"
 		@$(CC) $(CFLAGS) $(INCLUDE) $(P_OBJ) -o $@
 		@echo $(GREEN)"\t\tOK"$(RESET)
 
