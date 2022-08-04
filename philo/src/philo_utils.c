@@ -35,50 +35,67 @@ unsigned long long	ft_atoi_ph(t_info *info, const char *str)
 
 	i = 0;
 	nbr = 0;
+	while (str[i] && str[i] == ' ')
+		i++;
+	if (str[i] && (str[i] == '-' || str[i] == '+'))
+	{
+		if (!info->err && str[i] == '-')
+			info->err = 4;
+		i++;
+	}
 	while (str[i] && (str[i] >= '0' && str[i] <= '9'))
 	{
 		nbr = ((nbr * 10) + (str[i] - '0'));
 		i++;
 	}
-	if (str[0] != '0' && nbr == 0)
-		info->err = 1;
+	if (!info->err && nbr == 0 && (str[0] != '0' || str[1] != '\0'))
+		info->err = 4;
 	return (nbr);
 }
 
-size_t	ft_strlen(const char *str)
+int	ft_strcmp(char *s1, char *s2)
 {
-	size_t	i;
+	int	i;
 
 	i = 0;
-	while (str && str[i])
+	while (s1[i] && s2[i] && s1[i] == s2[i])
 		i++;
-	return (i);
+	return (s1[i] - s2[i]);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+static int	nbrlen(unsigned long long n)
 {
-	char	*new;
-	size_t	len1;
-	size_t	len2;
-	int		i;
-	int		j;
+	int			len;
 
-	if (!s1 && !s2)
-		return (NULL);
-	len1 = ft_strlen(s1);
-	len2 = ft_strlen(s2);
-	new = malloc(sizeof(char) * (len1 + len2 + 1));
-	if (!new)
-		return (NULL);
-	i = 0;
-	while (s1 && s1[i])
+	len = 1;
+	while (n > 9)
 	{
-		new[i] = s1[i];
-		i++;
+		n /= 10;
+		len++;
 	}
-	j = 0;
-	while (s2 && s2[j])
-		new[i++] = s2[j++];
-	new[i] = '\0';
-	return (new);
+	return (len);
+}
+
+static void	putnbr(unsigned long long n, char *str, int i)
+{
+	if (n > 9)
+		putnbr(n / 10, str, i - 1);
+	str[i] = (n % 10) + 48;
+}
+
+char	*ft_itoa_ph(t_info *info, unsigned long long n)
+{
+	char	*str;
+	int		len;
+
+	len = nbrlen(n);
+	str = malloc(sizeof(char) * (len + 1));
+	if (!str && !info->err)
+	{
+		info->err = -1;
+		return (NULL);
+	}
+	putnbr(n, str, len - 1);
+	str[len] = '\0';
+	return (str);
 }

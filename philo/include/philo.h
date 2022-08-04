@@ -28,9 +28,10 @@
 
 typedef struct s_philo
 {
-	int				philo_id;
-	int				last_eat;
-	pthread_t		*th;
+	uint64_t		num;
+	uint64_t		last_meal;
+	uint64_t		meal_count;
+	pthread_t		*id;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	struct s_philo	*next;
@@ -39,26 +40,30 @@ typedef struct s_philo
 typedef struct s_info
 {
 	int				err;
-	int				philo_num;
-	int				die_time;
-	int				eat_time;
-	int				sleep_time;
-	int				eat_num;
+	uint64_t		philo_num;
+	uint64_t		die_time;
+	uint64_t		eat_time;
+	uint64_t		sleep_time;
+	uint64_t		meal_num;
+	uint64_t		time;
 	pthread_mutex_t	**fork;
+	pthread_mutex_t	*print;
 	t_philo			*philo;
 }				t_info;
 
-int	info_init(t_info **info);
-int	check_parse(t_info *info, int argc, char **argv);
-int	err_msg(char *str, int err);
-int	return_free(t_info *info, char *str, int err);
+int	create_info(t_info **info);
+int check_arg(t_info *info, int argc, char **argv);
+int	err_msg(int err);
+int	return_free(t_info *info, int err);
 void	end_free(t_info *info);
+pthread_mutex_t	**create_fork(t_info *info, pthread_mutex_t **fork);
+t_philo	*create_philo(t_info *info, t_philo *philo);
 
 void	ft_putstr_fd(char *s, int fd);
 int	ft_isdigit(int c);
+int	ft_strcmp(char *s1, char *s2);
+char	*ft_itoa_ph(t_info *info, unsigned long long n);
 unsigned long long	ft_atoi_ph(t_info *info, const char *str);
-size_t	ft_strlen(const char *str);
-char	*ft_strjoin(char const *s1, char const *s2);
 
 #endif
 
