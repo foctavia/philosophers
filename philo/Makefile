@@ -27,7 +27,11 @@ RM = rm -rf
 SRCDIR = src/
 OBJDIR = obj/
 
-SRC = philo.c philo_utils.c
+SRC = philo.c \
+		arg.c create.c init.c \
+		simulation.c \
+		error.c \
+		utils1.c utils2.c
 
 # BONUS = 
 

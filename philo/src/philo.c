@@ -12,68 +12,47 @@
 
 #include "philo.h"
 
-void	log(t_info *info, int num, char *str)
+// void	*routine(void *arg)
+// {
+// 	t_info	*info;
+
+// 	info = ((t_info *)arg);
+// 	pthread_mutex_lock(&info->print);
+// 	printf("Hi, i'm philosopher number %llu\n", info->tmp->num);
+// 	printf("Bye from philosopher number %llu\n", info->tmp->num);
+// 	pthread_mutex_unlock(&info->print);
+// 	return (NULL);
+// }
+
+int	philo(t_info *info)
 {
-	pthread_mutex_lock(info->print);
-	printf("%d Philosopher number %d %s\n", info->time, num, str);
-	pthread_mutex_unlock(info->print);
-}
-
-void	is_eating(t_info *info)
-{
-	timestamp(info);
-	pthread_mutex_lock(info->tmp->left_fork);
-	log(info, info->tmp->num, "has taken a left fork")
-	timestamp(info);
-	pthread_mutex_lock(info->tmp->right_fork);
-	log(info, info->tmp->num, "has taken a right fork");
-	timestamp(info);
-	log(info, info->tmp->num, "is eating");
-	usleep(info->eat_time);
-	timestamp(info);
-	info->tmp->last_meal = info->time;
-	info->meal_count++;
-	pthread_mutex_unlock(info->tmp->left_fork);
-	pthread_mutex_unlock(info->tmp->right_fork);
-}
-
-void	*routine(void *arg)
-{
-	t_info	*info;
-
-	info = ((t_info *)arg);
-	if (info->tmp->num % 2)
-	{
-		is_eating(info);
-	}
-	else
-	{
-
-	}
-}
-
-void	philo(t_info *info)
-{
-	int	i;
-	t_philo	*tmp;
+	unsigned long long	i;
 
 	i = 0;
-	tmp = info->philo;
+	info->tmp = info->philo;
 	while (i < info->philo_num)
 	{
-		info->tmp = tmp;
-		pthread_create(&tmp->id, NULL, &routine, (void *)info);
-		tmp = tmp->next;
-		info->tmp = NULL;
+		printf("begin while loop, philo no %llu\n", info->tmp->num);
+		if (pthread_create(&info->tmp->id, NULL, &simulation, (void *)info))
+		{
+			info->err = 7;
+			return (1);
+		}
+		info->tmp = info->tmp->next;
 		i++;
 	}
 	i = 0;
 	while (i < info->philo_num)
 	{
-		pthread_join(tmp->id, NULL);
-		tmp = tmp->next;
+		if (pthread_join(info->tmp->id, NULL))
+		{
+			info->err = 8;
+			return (1);
+		}
+		info->tmp = info->tmp->next;
 		i++;
 	}
+	return (0);
 }
 
 int	main(int argc, char **argv)
@@ -86,16 +65,16 @@ int	main(int argc, char **argv)
 		return (return_free(info, info->err));
 	if (argc == 6)
 	{
-		if (info->eat_num == 0)
-			{
-				end_free(info);
-				return (0);
-			}
+		if (info->meal_num == 0)
+		{
+			end_free(info);
+			return (0);
+		}
 	}
 	if (philo_init(info))
 		return (return_free(info, info->err));
-	philo(info);
-	printf("ok\n");
-	// end_free(info);
+	if (philo(info))
+		return (return_free(info, info->err));
+	end_free(info);
 	return (0);
 }

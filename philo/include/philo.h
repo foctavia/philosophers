@@ -28,43 +28,49 @@
 
 typedef struct s_philo
 {
-	uint64_t		num;
-	uint64_t		last_meal;
-	uint64_t		meal_count;
-	pthread_t		*id;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
-	struct s_philo	*next;
-	struct s_philo	*prev;
+	unsigned long long	num;
+	unsigned long long	last_meal;
+	unsigned long long	meal_count;
+	pthread_t			id;
+	pthread_mutex_t		left_fork;
+	pthread_mutex_t		right_fork;
+	struct s_philo		*next;
+	struct s_philo		*prev;
 }				t_philo;
 
 typedef struct s_info
 {
-	int				err;
-	uint64_t		philo_num;
-	uint64_t		die_time;
-	uint64_t		eat_time;
-	uint64_t		sleep_time;
-	uint64_t		meal_num;
-	uint64_t		time;
-	pthread_mutex_t	*print;
-	t_philo			*philo;
-	t_philo			*tmp;
+	int					err;
+	unsigned long long	philo_num;
+	unsigned long long	die_time;
+	unsigned long long	eat_time;
+	unsigned long long	sleep_time;
+	unsigned long long	meal_num;
+	unsigned long long	time;
+	pthread_mutex_t		print;
+	t_philo				*philo;
+	t_philo				*tmp;
 }				t_info;
 
-int	create_info(t_info **info);
-int check_arg(t_info *info, int argc, char **argv);
-int	err_msg(int err);
-int	return_free(t_info *info, int err);
-void	end_free(t_info *info);
-pthread_mutex_t	**create_fork(t_info *info, pthread_mutex_t **fork);
-t_philo	*create_philo(t_info *info, t_philo *philo);
+int					create_info(t_info **info);
+int					check_arg(t_info *info, int argc, char **argv);
+int					philo_init(t_info *info);
+int					err_msg(int err);
+int					return_free(t_info *info, int err);
+int					ft_isdigit(int c);
+int					ft_strcmp(char *s1, char *s2);
 
-void	ft_putstr_fd(char *s, int fd);
-int	ft_isdigit(int c);
-int	ft_strcmp(char *s1, char *s2);
-char	*ft_itoa_ph(t_info *info, unsigned long long n);
+void				timestamp(t_info *info);
+void				*simulation(void *arg);
+void				is_eating(t_info *info);
+void				ft_log(t_info *info, int num, char *str);
+void				end_free(t_info *info);
+void				ft_putstr_fd(char *s, int fd);
+
+t_philo				*create_philo(t_info *info, t_philo *philo);
+
+char				*ft_itoa_ph(t_info *info, unsigned long long n);
+
 unsigned long long	ft_atoi_ph(t_info *info, const char *str);
 
 #endif
-

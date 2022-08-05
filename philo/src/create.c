@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   create.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: foctavia <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/08/05 14:59:17 by foctavia          #+#    #+#             */
+/*   Updated: 2022/08/05 14:59:19 by foctavia         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philo.h"
 
@@ -12,8 +23,7 @@ int	create_info(t_info **info)
 	(*info)->eat_time = 0;
 	(*info)->sleep_time = 0;
 	(*info)->meal_num = 0;
-    (*info)->time = 0;
-    (*info)->print = NULL;
+	(*info)->time = 0;
 	(*info)->philo = NULL;
 	(*info)->tmp = NULL;
 	return (0);
@@ -39,8 +49,8 @@ static void	add_philo(t_philo **ph1, t_philo *ph2)
 
 t_philo	*create_philo(t_info *info, t_philo *philo)
 {
-	t_philo	*tmp;
-	int	i;
+	t_philo				*tmp;
+	unsigned long long	i;
 
 	i = 0;
 	while (i < info->philo_num)
@@ -53,10 +63,7 @@ t_philo	*create_philo(t_info *info, t_philo *philo)
 		}
 		tmp->num = i + 1;
 		tmp->last_meal = 0;
-        tmp->meal_count = 0;
-		tmp->id = NULL;
-		tmp->left_fork = NULL;
-		tmp->right_fork = NULL;
+		tmp->meal_count = 0;
 		tmp->next = tmp;
 		tmp->prev = tmp;
 		add_philo(&philo, tmp);
