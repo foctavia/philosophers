@@ -35,6 +35,7 @@ typedef struct s_philo
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	struct s_philo	*next;
+	struct s_philo	*prev;
 }				t_philo;
 
 typedef struct s_info
@@ -46,9 +47,9 @@ typedef struct s_info
 	uint64_t		sleep_time;
 	uint64_t		meal_num;
 	uint64_t		time;
-	pthread_mutex_t	**fork;
 	pthread_mutex_t	*print;
 	t_philo			*philo;
+	t_philo			*tmp;
 }				t_info;
 
 int	create_info(t_info **info);

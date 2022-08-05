@@ -12,60 +12,68 @@
 
 #include "philo.h"
 
-// void	*routine()
-// {
-// 	pthread_mutex_lock(&mutex_philo);
-
-// 	pthread_mutex_unlock(&mutex_philo);
-// }
-
-// void	philo(t_tool *tool)
-// {
-// 	int	i;
-
-// 	tool->th = (pthread_t *)malloc(sizeof(pthread_t * tool->philo_num));
-// 	if (!(tool->th))
-// 		exit_free(tool, "malloc", 1);
-// 	pthread_mutex_init(tool->&mutex_philo, NULL);
-// 	i = 0;
-// 	while (i < tool->philo_num)
-// 	{
-// 		pthread_create(tool->&th[i], NULL, &routine, NULL);
-// 	}
-// 	i = 0;
-// 	while (i < tool->philo_num)
-// 	{
-// 		pthread_join(tool->th[i], NULL);
-// 	}
-// 	pthread_mutex_destroy(tool->&mutex_philo);
-// }
-
-void	timestamp(t_info *info)
+void	log(t_info *info, int num, char *str)
 {
-	static int	init;
-	static struct timeval	start;
-	struct timeval	check;
-
-	if (init == 0)
-	{
-		gettimeofday(&start, NULL);
-		init++;
-		return ;
-	}
-	gettimeofday(&check, NULL);
-	info->time = (check.tv_sec * 1000 + check.tv_usec / 1000)
-			- (start.tv_sec * 1000 + start.tv_usec / 1000);
+	pthread_mutex_lock(info->print);
+	printf("%d Philosopher number %d %s\n", info->time, num, str);
+	pthread_mutex_unlock(info->print);
 }
 
-int	philo_init(t_info *info)
+void	is_eating(t_info *info)
 {
 	timestamp(info);
-	pthread_mutex_init(&info->print, NULL);
-	info->fork = create_fork(info, info->fork);
-	info->philo = create_philo(info, info->philo);
-	if (!info->fork || !info->philo)
-		return (return_free(info, info->free));
-	return (0);
+	pthread_mutex_lock(info->tmp->left_fork);
+	log(info, info->tmp->num, "has taken a left fork")
+	timestamp(info);
+	pthread_mutex_lock(info->tmp->right_fork);
+	log(info, info->tmp->num, "has taken a right fork");
+	timestamp(info);
+	log(info, info->tmp->num, "is eating");
+	usleep(info->eat_time);
+	timestamp(info);
+	info->tmp->last_meal = info->time;
+	info->meal_count++;
+	pthread_mutex_unlock(info->tmp->left_fork);
+	pthread_mutex_unlock(info->tmp->right_fork);
+}
+
+void	*routine(void *arg)
+{
+	t_info	*info;
+
+	info = ((t_info *)arg);
+	if (info->tmp->num % 2)
+	{
+		is_eating(info);
+	}
+	else
+	{
+
+	}
+}
+
+void	philo(t_info *info)
+{
+	int	i;
+	t_philo	*tmp;
+
+	i = 0;
+	tmp = info->philo;
+	while (i < info->philo_num)
+	{
+		info->tmp = tmp;
+		pthread_create(&tmp->id, NULL, &routine, (void *)info);
+		tmp = tmp->next;
+		info->tmp = NULL;
+		i++;
+	}
+	i = 0;
+	while (i < info->philo_num)
+	{
+		pthread_join(tmp->id, NULL);
+		tmp = tmp->next;
+		i++;
+	}
 }
 
 int	main(int argc, char **argv)
@@ -84,9 +92,10 @@ int	main(int argc, char **argv)
 				return (0);
 			}
 	}
-	philo_init(info);
+	if (philo_init(info))
+		return (return_free(info, info->err));
+	philo(info);
 	printf("ok\n");
-	// philo(info);
 	// end_free(info);
 	return (0);
 }

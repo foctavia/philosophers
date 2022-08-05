@@ -13,9 +13,9 @@ int	create_info(t_info **info)
 	(*info)->sleep_time = 0;
 	(*info)->meal_num = 0;
     (*info)->time = 0;
-	(*info)->fork = NULL;
     (*info)->print = NULL;
 	(*info)->philo = NULL;
+	(*info)->tmp = NULL;
 	return (0);
 }
 
@@ -32,7 +32,9 @@ static void	add_philo(t_philo **ph1, t_philo *ph2)
 	while (tmp->next != *ph1)
 		tmp = tmp->next;
 	tmp->next = ph2;
+	ph2->prev = tmp;
 	ph2->next = *ph1;
+	(*ph1)->prev = ph2;
 }
 
 t_philo	*create_philo(t_info *info, t_philo *philo)
@@ -56,28 +58,10 @@ t_philo	*create_philo(t_info *info, t_philo *philo)
 		tmp->left_fork = NULL;
 		tmp->right_fork = NULL;
 		tmp->next = tmp;
+		tmp->prev = tmp;
 		add_philo(&philo, tmp);
 		tmp = NULL;
 		i++;
 	}
 	return (philo);
-}
-
-pthread_mutex_t	**create_fork(t_info *info, pthread_mutex_t **fork)
-{
-	int	i;
-
-	i = 0;
-	fork = malloc(sizeof(pthread_mutex_t *) * info->philo_num);
-	if (!fork)
-	{
-		info->err = -1;
-		return (NULL);
-	}
-	while (i < info->philo_num)
-	{
-		pthread_mutex_init(&fork[i], NULL);
-		i++;
-	}
-	return (fork);
 }

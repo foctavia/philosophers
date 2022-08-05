@@ -28,6 +28,8 @@ static void free_list(t_philo *philo)
         tmp1 = philo->next;
         while (tmp1 != philo)
         {
+            tmp1->right_fork = NULL;
+            pthread_mutex_destroy(&tmp1->left_fork);
             tmp2 = tmp1;
             tmp1 = tmp1->next;
             free(tmp2);
@@ -41,10 +43,8 @@ int	return_free(t_info *info, int err)
     err_msg(err);
 	if (info)
 	{
-		if (info->fork)
-			free(info->fork);
         if (info->print)
-            free(info->print);
+            pthread_mutex_destroy(&info->print);
 		if (info->philo)
 			free_list(info->philo);
 		free(info);
@@ -56,10 +56,8 @@ void	end_free(t_info *info)
 {
 	if (info)
 	{
-		if (info->fork)
-			free(info->fork);
         if (info->print)
-            free(info->print);
+            pthread_mutex_destroy(&info->print);
 		if (info->philo)
 			free_list(info->philo);
 		free(info);
