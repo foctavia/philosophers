@@ -58,12 +58,11 @@ static int	validate_arg(t_info *info, int argc, char **argv)
 			j++;
 		}
 		check_value(info, argv[i]);
+		if (info->err)
+			return (1);
 		i++;
 	}
-	if (info->err)
-		return (1);
-	else
-		return (0);
+	return (0);
 }
 
 static int	parse_arg(t_info *info, int argc, char **argv)

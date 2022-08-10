@@ -18,6 +18,7 @@ int	create_info(t_info **info)
 	if (!(*info))
 		return (err_msg(-1));
 	(*info)->err = 0;
+	(*info)->dead = 0;
 	(*info)->philo_num = 0;
 	(*info)->die_time = 0;
 	(*info)->eat_time = 0;
@@ -64,7 +65,7 @@ t_philo	*create_philo(t_info *info, t_philo *philo)
 		tmp->num = i + 1;
 		tmp->last_meal = 0;
 		tmp->meal_count = 0;
-		tmp->dead = 0;
+		tmp->dead = &info->dead;
 		tmp->stop = 0;
 		tmp->next = tmp;
 		tmp->prev = tmp;

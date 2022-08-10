@@ -57,9 +57,10 @@ void	free_list(t_philo *philo)
 int	return_free(t_info *info, int err)
 {
 	err_msg(err);
+	pthread_mutex_destroy(&info->print);
+	fork_destroy(info, info->philo);
 	if (info)
 	{
-		pthread_mutex_destroy(&info->print);
 		if (info->philo)
 			free_list(info->philo);
 		free(info);

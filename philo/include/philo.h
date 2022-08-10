@@ -28,8 +28,9 @@
 
 typedef struct s_philo
 {
-	int					dead;
+	int					*dead;
 	int					stop;
+	int					sig;
 	unsigned long long	num;
 	unsigned long long	last_meal;
 	unsigned long long	meal_count;
@@ -44,6 +45,7 @@ typedef struct s_philo
 typedef struct s_info
 {
 	int					err;
+	int					dead;
 	unsigned long long	philo_num;
 	unsigned long long	die_time;
 	unsigned long long	eat_time;
@@ -51,6 +53,8 @@ typedef struct s_info
 	unsigned long long	meal_num;
 	unsigned long long	time;
 	pthread_mutex_t		print;
+	pthread_t			monitor_id;
+	pthread_t			waiter_id;
 	t_philo				*philo;
 	t_philo				*tmp;
 }				t_info;
@@ -58,6 +62,7 @@ typedef struct s_info
 int					create_info(t_info **info);
 int					check_arg(t_info *info, int argc, char **argv);
 int					philo_init(t_info *info);
+int					join_philo(t_info *info);
 int					meal_count(t_philo *philo);
 int					err_msg(int err);
 int					return_free(t_info *info, int err);
@@ -67,7 +72,8 @@ int					ft_strcmp(char *s1, char *s2);
 void				*simulation(void *arg);
 void				*monitor(void *arg);
 void				ft_log(t_info *info, int num, char *str);
-void				end_free(t_info *info);
+void				destroy_free(t_info *info);
+void				fork_destroy(t_info *info, t_philo *philo);
 void				free_list(t_philo *philo);
 void				ft_putstr_fd(char *s, int fd);
 
@@ -75,7 +81,7 @@ t_philo				*create_philo(t_info *info, t_philo *philo);
 
 char				*ft_itoa_ph(t_info *info, unsigned long long n);
 
-unsigned long long 	timestamp(t_info *info);
+unsigned long long	timestamp(t_info *info);
 unsigned long long	ft_atoi_ph(t_info *info, const char *str);
 
 #endif

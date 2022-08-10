@@ -15,14 +15,13 @@
 int	philo(t_info *info)
 {
 	unsigned long long	i;
-	pthread_t			monitor_id;
 
 	i = 0;
 	info->tmp = info->philo;
 	while (i < info->philo_num)
 	{
-		printf("begin while loop, philo no %llu\n", info->tmp->num);
-		if (pthread_create(&info->tmp->id, NULL, &simulation, (void *)info->tmp))
+		if (pthread_create(&info->tmp->id, NULL,
+				&simulation, (void *)info->tmp) != 0)
 		{
 			info->err = 7;
 			return (1);
@@ -30,22 +29,10 @@ int	philo(t_info *info)
 		info->tmp = info->tmp->next;
 		i++;
 	}
-	if (pthread_create(&monitor_id, NULL, &monitor, (void *)info))
+	if (pthread_create(&info->monitor_id, NULL, &monitor, (void *)info))
 	{
 		info->err = 7;
 		return (1);
-	}
-	if (pthread_join(monitor_id, NULL))
-	{
-		info->err = 8;
-		return(1);
-	}
-	i = 0;
-	while (i < info->philo_num)
-	{
-		pthread_join(info->tmp->id, NULL);
-		info->tmp = info->tmp->next;
-		i++;
 	}
 	return (0);
 }
@@ -62,7 +49,7 @@ int	main(int argc, char **argv)
 	{
 		if (info->meal_num == 0)
 		{
-			end_free(info);
+			free(info);
 			return (0);
 		}
 	}
@@ -70,6 +57,8 @@ int	main(int argc, char **argv)
 		return (return_free(info, info->err));
 	if (philo(info))
 		return (return_free(info, info->err));
-	end_free(info);
+	if (join_philo(info))
+		return (return_free(info, info->err));
+	destroy_free(info);
 	return (0);
 }

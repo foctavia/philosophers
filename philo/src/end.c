@@ -1,7 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   end.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: foctavia <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/08/10 17:11:19 by foctavia          #+#    #+#             */
+/*   Updated: 2022/08/10 17:11:22 by foctavia         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philo.h"
 
-static void	fork_destroy(t_info *info, t_philo *philo)
+void	fork_destroy(t_info *info, t_philo *philo)
 {
 	unsigned long long	i;
 	t_philo				*tmp;
@@ -24,17 +35,8 @@ static void	fork_destroy(t_info *info, t_philo *philo)
 	}
 }
 
-void	end_free(t_info *info)
+void	destroy_free(t_info *info)
 {
-	// unsigned long long	i;
-
-	// i = 0;
-	// while (i < info->philo_num)
-	// {
-	// 	pthread_join(info->tmp->id, NULL);
-	// 	info->tmp = info->tmp->next;
-	// 	i++;
-	// }
 	pthread_mutex_destroy(&info->print);
 	fork_destroy(info, info->philo);
 	if (info)
@@ -43,4 +45,46 @@ void	end_free(t_info *info)
 			free_list(info->philo);
 		free(info);
 	}
+}
+
+static void	unlock_fork(t_info *info)
+{
+	unsigned long long	i;
+
+	i = 0;
+	info->tmp = info->philo;
+	if (info->philo_num == 1)
+		pthread_mutex_unlock(&info->philo->left_fork);
+	while (i < info->philo_num)
+	{
+		pthread_mutex_unlock(&info->tmp->left_fork);
+		info->tmp = info->tmp->next;
+		i++;
+	}
+}
+
+int	join_philo(t_info *info)
+{
+	unsigned long long	i;
+
+	i = 0;
+	info->tmp = info->philo;
+	if (pthread_join(info->monitor_id, NULL))
+	{
+		info->err = 8;
+		return (1);
+	}
+	unlock_fork(info);
+	while (i < info->philo_num)
+	{
+		if (pthread_join(info->tmp->id, NULL))
+		{
+			info->err = 8;
+			return (1);
+		}
+		info->tmp = info->tmp->next;
+		i++;
+	}
+	pthread_mutex_unlock(&info->print);
+	return (0);
 }
