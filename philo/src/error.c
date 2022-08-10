@@ -35,7 +35,7 @@ int	err_msg(int err)
 	return (1);
 }
 
-static void	free_list(t_philo *philo)
+void	free_list(t_philo *philo)
 {
 	t_philo	*tmp1;
 	t_philo	*tmp2;
@@ -59,23 +59,10 @@ int	return_free(t_info *info, int err)
 	err_msg(err);
 	if (info)
 	{
-		// if (info->print)
-		// 	pthread_mutex_destroy(&info->print);
+		pthread_mutex_destroy(&info->print);
 		if (info->philo)
 			free_list(info->philo);
 		free(info);
 	}
 	return (1);
-}
-
-void	end_free(t_info *info)
-{
-	if (info)
-	{
-		// if (info->print)
-		// 	pthread_mutex_destroy(&info->print);
-		if (info->philo)
-			free_list(info->philo);
-		free(info);
-	}
 }

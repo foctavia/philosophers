@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-void	timestamp(t_info *info)
+unsigned long long	timestamp(t_info *info)
 {
 	static int				init;
 	static struct timeval	start;
@@ -22,11 +22,12 @@ void	timestamp(t_info *info)
 	{
 		gettimeofday(&start, NULL);
 		init++;
-		return ;
+		return (0);
 	}
 	gettimeofday(&check, NULL);
 	info->time = ((check.tv_sec * 1000) + (check.tv_usec / 1000))
 		- ((start.tv_sec * 1000) + (start.tv_usec / 1000));
+	return (info->time);
 }
 
 static int	fork_init(t_info *info, t_philo *philo)
@@ -50,7 +51,7 @@ static int	fork_init(t_info *info, t_philo *philo)
 	tmp = philo;
 	while (i < info->philo_num)
 	{
-		tmp->right_fork = tmp->prev->left_fork;
+		tmp->right_fork = &tmp->prev->left_fork;
 		tmp = tmp->next;
 		i++;
 	}

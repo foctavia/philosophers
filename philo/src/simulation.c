@@ -15,40 +15,76 @@
 void	ft_log(t_info *info, int num, char *str)
 {
 	pthread_mutex_lock(&info->print);
-	printf("%llu Philosopher number %d %s\n", info->time, num, str);
+	printf("%llu Philosopher number %d %s\n", timestamp(info), num, str);
 	pthread_mutex_unlock(&info->print);
 }
 
-void	is_eating(t_info *info)
+static void	is_leftie(t_philo *philo)
 {
-	timestamp(info);
-	pthread_mutex_lock(&info->tmp->left_fork);
-	ft_log(info, info->tmp->num, "has taken a left fork");
-	timestamp(info);
-	pthread_mutex_lock(&info->tmp->right_fork);
-	ft_log(info, info->tmp->num, "has taken a right fork");
-	timestamp(info);
-	ft_log(info, info->tmp->num, "is eating");
-	usleep(info->eat_time * 1000);
-	timestamp(info);
-	info->tmp->last_meal = info->time;
-	info->tmp->meal_count++;
-	pthread_mutex_unlock(&info->tmp->left_fork);
-	pthread_mutex_unlock(&info->tmp->right_fork);
+	pthread_mutex_lock(&philo->left_fork);
+	ft_log(philo->info, philo->num, "has taken a left fork");
+	if (philo->stop || philo->dead)
+			return ;
+	pthread_mutex_lock(philo->right_fork);
+	ft_log(philo->info, philo->num, "has taken a right fork");
+	ft_log(philo->info, philo->num, "is eating");
+	philo->last_meal = timestamp(philo->info);
+	usleep(philo->info->eat_time * 1000);
+	philo->meal_count++;
+	pthread_mutex_unlock(&philo->left_fork);
+	pthread_mutex_unlock(philo->right_fork);
+}
+
+static void	is_rightie(t_philo *philo)
+{
+	pthread_mutex_lock(philo->right_fork);
+	ft_log(philo->info, philo->num, "has taken a right fork");
+	if (philo->stop || philo->dead)
+			return ;
+	pthread_mutex_lock(&philo->left_fork);
+	ft_log(philo->info, philo->num, "has taken a left fork");
+	ft_log(philo->info, philo->num, "is eating");
+	philo->last_meal = timestamp(philo->info);
+	usleep(philo->info->eat_time * 1000);
+	philo->meal_count++;
+	pthread_mutex_unlock(philo->right_fork);
+	pthread_mutex_unlock(&philo->left_fork);
+}
+
+int	meal_count(t_philo *philo)
+{
+	if (
+		philo->info->meal_num > 0)
+	{
+		if (philo->meal_count == philo->info->meal_num)
+		{
+			philo->stop = 1;
+			return (1);
+		}
+	}
+	return (0);
 }
 
 void	*simulation(void *arg)
 {
-	t_info	*info;
+	t_philo	*philo;
 
-	info = ((t_info *)arg);
-	if (info->tmp->num % 2)
+	philo = ((t_philo *)arg);
+	while (!philo->stop)
 	{
-		is_eating(info);
-	}
-	else
-	{
-		printf("even num\n");
+		if (meal_count(philo))
+			return (NULL);
+		if (!(philo->num % 2) && philo->num != philo->info->philo_num)
+			is_rightie(philo);
+		else
+			is_leftie(philo);
+		if (meal_count(philo) || philo->stop)
+			return (NULL);
+		ft_log(philo->info, philo->num, "is sleeping");
+		usleep(philo->info->sleep_time * 1000);
+		if (philo->stop)
+			return (NULL);
+		ft_log(philo->info, philo->num, "is thinking");
 	}
 	return (NULL);
 }

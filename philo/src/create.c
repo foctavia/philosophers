@@ -64,8 +64,11 @@ t_philo	*create_philo(t_info *info, t_philo *philo)
 		tmp->num = i + 1;
 		tmp->last_meal = 0;
 		tmp->meal_count = 0;
+		tmp->dead = 0;
+		tmp->stop = 0;
 		tmp->next = tmp;
 		tmp->prev = tmp;
+		tmp->info = info;
 		add_philo(&philo, tmp);
 		tmp = NULL;
 		i++;

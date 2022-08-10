@@ -29,8 +29,8 @@ OBJDIR = obj/
 
 SRC = philo.c \
 		arg.c create.c init.c \
-		simulation.c \
-		error.c \
+		simulation.c monitor.c \
+		error.c end.c\
 		utils1.c utils2.c
 
 # BONUS = 

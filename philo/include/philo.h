@@ -28,14 +28,17 @@
 
 typedef struct s_philo
 {
+	int					dead;
+	int					stop;
 	unsigned long long	num;
 	unsigned long long	last_meal;
 	unsigned long long	meal_count;
 	pthread_t			id;
 	pthread_mutex_t		left_fork;
-	pthread_mutex_t		right_fork;
+	pthread_mutex_t		*right_fork;
 	struct s_philo		*next;
 	struct s_philo		*prev;
+	struct s_info		*info;
 }				t_philo;
 
 typedef struct s_info
@@ -55,22 +58,24 @@ typedef struct s_info
 int					create_info(t_info **info);
 int					check_arg(t_info *info, int argc, char **argv);
 int					philo_init(t_info *info);
+int					meal_count(t_philo *philo);
 int					err_msg(int err);
 int					return_free(t_info *info, int err);
 int					ft_isdigit(int c);
 int					ft_strcmp(char *s1, char *s2);
 
-void				timestamp(t_info *info);
 void				*simulation(void *arg);
-void				is_eating(t_info *info);
+void				*monitor(void *arg);
 void				ft_log(t_info *info, int num, char *str);
 void				end_free(t_info *info);
+void				free_list(t_philo *philo);
 void				ft_putstr_fd(char *s, int fd);
 
 t_philo				*create_philo(t_info *info, t_philo *philo);
 
 char				*ft_itoa_ph(t_info *info, unsigned long long n);
 
+unsigned long long 	timestamp(t_info *info);
 unsigned long long	ft_atoi_ph(t_info *info, const char *str);
 
 #endif

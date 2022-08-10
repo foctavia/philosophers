@@ -12,28 +12,17 @@
 
 #include "philo.h"
 
-// void	*routine(void *arg)
-// {
-// 	t_info	*info;
-
-// 	info = ((t_info *)arg);
-// 	pthread_mutex_lock(&info->print);
-// 	printf("Hi, i'm philosopher number %llu\n", info->tmp->num);
-// 	printf("Bye from philosopher number %llu\n", info->tmp->num);
-// 	pthread_mutex_unlock(&info->print);
-// 	return (NULL);
-// }
-
 int	philo(t_info *info)
 {
 	unsigned long long	i;
+	pthread_t			monitor_id;
 
 	i = 0;
 	info->tmp = info->philo;
 	while (i < info->philo_num)
 	{
 		printf("begin while loop, philo no %llu\n", info->tmp->num);
-		if (pthread_create(&info->tmp->id, NULL, &simulation, (void *)info))
+		if (pthread_create(&info->tmp->id, NULL, &simulation, (void *)info->tmp))
 		{
 			info->err = 7;
 			return (1);
@@ -41,14 +30,20 @@ int	philo(t_info *info)
 		info->tmp = info->tmp->next;
 		i++;
 	}
+	if (pthread_create(&monitor_id, NULL, &monitor, (void *)info))
+	{
+		info->err = 7;
+		return (1);
+	}
+	if (pthread_join(monitor_id, NULL))
+	{
+		info->err = 8;
+		return(1);
+	}
 	i = 0;
 	while (i < info->philo_num)
 	{
-		if (pthread_join(info->tmp->id, NULL))
-		{
-			info->err = 8;
-			return (1);
-		}
+		pthread_join(info->tmp->id, NULL);
 		info->tmp = info->tmp->next;
 		i++;
 	}
