@@ -85,6 +85,5 @@ int	join_philo(t_info *info)
 		info->tmp = info->tmp->next;
 		i++;
 	}
-	pthread_mutex_unlock(&info->print);
 	return (0);
 }

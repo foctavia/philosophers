@@ -15,13 +15,11 @@
 void	ft_log(t_info *info, int num, char *str)
 {
 	pthread_mutex_lock(&info->print);
-	if (info->dead == 0)
+	if (!info->dead || !ft_strcmp(str, "died"))
 	{
-		printf("%llu Philosopher number %d %s\n", timestamp(info), num, str);
-		pthread_mutex_unlock(&info->print);
+		printf("%llu Philosopher no. %d %s\n", timestamp(info), num, str);
 	}
-	else
-		printf("%llu Philosopher number %d %s\n", timestamp(info), num, str);
+	pthread_mutex_unlock(&info->print);
 }
 
 static void	is_leftie(t_philo *philo)
@@ -32,10 +30,12 @@ static void	is_leftie(t_philo *philo)
 	if (philo->stop || *philo->dead)
 		return ;
 	ft_log(philo->info, philo->num, "has taken a right fork");
-	ft_log(philo->info, philo->num, "is eating");
+	if (philo->stop || *philo->dead)
+		return ;
 	philo->last_meal = timestamp(philo->info);
-	usleep(philo->info->eat_time * 1000);
 	philo->meal_count++;
+	ft_log(philo->info, philo->num, "is eating");
+	usleep(philo->info->eat_time * 1000);
 	pthread_mutex_unlock(&philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
 }
@@ -48,10 +48,12 @@ static void	is_rightie(t_philo *philo)
 	if (philo->stop || *philo->dead)
 		return ;
 	ft_log(philo->info, philo->num, "has taken a left fork");
+	if (philo->stop || *philo->dead)
+		return ;
 	philo->last_meal = timestamp(philo->info);
+	philo->meal_count++;
 	ft_log(philo->info, philo->num, "is eating");
 	usleep(philo->info->eat_time * 1000);
-	philo->meal_count++;
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(&philo->left_fork);
 }
@@ -74,7 +76,7 @@ void	*simulation(void *arg)
 	t_philo	*philo;
 
 	philo = ((t_philo *)arg);
-	while (!philo->stop)
+	while (!philo->stop || !(*philo->dead))
 	{
 		if (meal_count(philo) || philo->stop || *philo->dead)
 			return (NULL);
@@ -91,7 +93,7 @@ void	*simulation(void *arg)
 		if (philo->stop || *philo->dead)
 			return (NULL);
 		ft_log(philo->info, philo->num, "is thinking");
-		usleep(100);
+		usleep(50);
 	}
 	return (NULL);
 }

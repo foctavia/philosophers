@@ -15,7 +15,7 @@
 int	err_msg(int err)
 {
 	if (err == -1)
-		ft_putstr_fd("Error: Insufficient memory\n", 2);
+		ft_putstr_fd("Error: Malloc function failed\n", 2);
 	else if (err == 1)
 		ft_putstr_fd("Error: Invalid number of argument\n", 2);
 	else if (err == 2)
@@ -45,7 +45,6 @@ void	free_list(t_philo *philo)
 		tmp1 = philo->next;
 		while (tmp1 != philo)
 		{
-			pthread_mutex_destroy(&tmp1->left_fork);
 			tmp2 = tmp1;
 			tmp1 = tmp1->next;
 			free(tmp2);
@@ -54,9 +53,32 @@ void	free_list(t_philo *philo)
 	}
 }
 
-int	return_free(t_info *info, int err)
+int	err_free(t_info *info, int err)
 {
 	err_msg(err);
+	if (info)
+		free(info);
+	return (1);
+}
+
+int	err_destroy_free(t_info *info, int err)
+{
+	err_msg(err);
+	pthread_mutex_destroy(&info->print);
+	fork_destroy(info, info->philo);
+	if (info)
+	{
+		if (info->philo)
+			free_list(info->philo);
+		free(info);
+	}
+	return (1);
+}
+
+int	err_join_destroy_free(t_info *info, int err)
+{
+	err_msg(err);
+	join_philo(info);
 	pthread_mutex_destroy(&info->print);
 	fork_destroy(info, info->philo);
 	if (info)

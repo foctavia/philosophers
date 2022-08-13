@@ -44,7 +44,7 @@ int	main(int argc, char **argv)
 	if (create_info(&info))
 		return (1);
 	if (check_arg(info, argc, argv))
-		return (return_free(info, info->err));
+		return (err_free(info, info->err));
 	if (argc == 6)
 	{
 		if (info->meal_num == 0)
@@ -54,11 +54,11 @@ int	main(int argc, char **argv)
 		}
 	}
 	if (philo_init(info))
-		return (return_free(info, info->err));
+		return (err_destroy_free(info, info->err));
 	if (philo(info))
-		return (return_free(info, info->err));
+		return (err_join_destroy_free(info, info->err));
 	if (join_philo(info))
-		return (return_free(info, info->err));
+		return (err_join_destroy_free(info, info->err));
 	destroy_free(info);
 	return (0);
 }

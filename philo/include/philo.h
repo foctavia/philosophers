@@ -30,7 +30,6 @@ typedef struct s_philo
 {
 	int					*dead;
 	int					stop;
-	int					sig;
 	unsigned long long	num;
 	unsigned long long	last_meal;
 	unsigned long long	meal_count;
@@ -54,7 +53,6 @@ typedef struct s_info
 	unsigned long long	time;
 	pthread_mutex_t		print;
 	pthread_t			monitor_id;
-	pthread_t			waiter_id;
 	t_philo				*philo;
 	t_philo				*tmp;
 }				t_info;
@@ -65,7 +63,9 @@ int					philo_init(t_info *info);
 int					join_philo(t_info *info);
 int					meal_count(t_philo *philo);
 int					err_msg(int err);
-int					return_free(t_info *info, int err);
+int					err_free(t_info *info, int err);
+int					err_join_destroy_free(t_info *info, int err);
+int					err_destroy_free(t_info *info, int err);
 int					ft_isdigit(int c);
 int					ft_strcmp(char *s1, char *s2);
 
