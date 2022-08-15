@@ -33,6 +33,9 @@ static void	is_leftie(t_philo *philo)
 	if (philo->stop || *philo->dead)
 		return ;
 	philo->last_meal = timestamp(philo->info);
+	// pthread_mutex_lock(&philo->info->print);
+	// printf("no. %llu, last meal is %llu\n", philo->num, philo->last_meal);
+	// pthread_mutex_unlock(&philo->info->print);
 	philo->meal_count++;
 	ft_log(philo->info, philo->num, "is eating");
 	usleep(philo->info->eat_time * 1000);
@@ -52,6 +55,9 @@ static void	is_rightie(t_philo *philo)
 		return ;
 	philo->last_meal = timestamp(philo->info);
 	philo->meal_count++;
+	// pthread_mutex_lock(&philo->info->print);
+	// printf("no. %llu, last meal is %llu\n", philo->num, philo->last_meal);
+	// pthread_mutex_unlock(&philo->info->print);
 	ft_log(philo->info, philo->num, "is eating");
 	usleep(philo->info->eat_time * 1000);
 	pthread_mutex_unlock(philo->right_fork);
@@ -78,6 +84,10 @@ void	*simulation(void *arg)
 	philo = ((t_philo *)arg);
 	while (!philo->stop || !(*philo->dead))
 	{
+		if (philo->stop || *philo->dead)
+			return (NULL);
+		ft_log(philo->info, philo->num, "is thinking");
+		usleep(100);
 		if (meal_count(philo) || philo->stop || *philo->dead)
 			return (NULL);
 		if (philo->info->philo_num % 2 && philo->num == philo->info->philo_num)
@@ -90,10 +100,6 @@ void	*simulation(void *arg)
 			return (NULL);
 		ft_log(philo->info, philo->num, "is sleeping");
 		usleep(philo->info->sleep_time * 1000);
-		if (philo->stop || *philo->dead)
-			return (NULL);
-		ft_log(philo->info, philo->num, "is thinking");
-		usleep(50);
 	}
 	return (NULL);
 }

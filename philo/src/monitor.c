@@ -31,8 +31,14 @@ void	*monitor(void *arg)
 	info->tmp = info->philo;
 	while (!info->dead && !info->tmp->stop)
 	{
-		if (timestamp(info) - info->tmp->last_meal > info->die_time)
+		// pthread_mutex_lock(&info->print);
+		// printf("no. %llu, time is %llu, last meal is %llu, minus is %llu\n", info->tmp->num, info->time, info->tmp->last_meal, info->time - info->tmp->last_meal);
+		// pthread_mutex_unlock(&info->print);
+		if ((info->time - info->tmp->last_meal) > info->die_time && (info->time - info->tmp->last_meal) > 0)
 		{
+			// pthread_mutex_lock(&info->print);
+			// printf("no. %llu, time is %llu, last meal is %llu, minus is %llu\n", info->tmp->num, info->time, info->tmp->last_meal, info->time - info->tmp->last_meal);
+			// pthread_mutex_unlock(&info->print);
 			is_dying(info, info->tmp);
 			return (NULL);
 		}
