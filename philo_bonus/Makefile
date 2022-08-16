@@ -14,7 +14,7 @@ RED = "\033[1;31m"
 GREEN = "\033[1;32m"
 RESET = "\033[m"
 
-NAME = philo
+NAME = philo_bonus
 
 CC = cc
 
@@ -51,7 +51,7 @@ $(OBJDIR)%.o : $(SRCDIR)%.c
 		$(CC) $(CFLAGS) $(MEM) $(THREAD) $(INCLUDE) -c $< -o $@
 
 $(NAME) : $(P_OBJ)
-		@echo -n "Compiling philo"
+		@echo -n "Compiling philo_bonus"
 		@$(CC) $(CFLAGS) $(MEM) $(THREAD) $(INCLUDE) $(P_OBJ) -o $@
 		@echo $(GREEN)"\t\tOK"$(RESET)
 
