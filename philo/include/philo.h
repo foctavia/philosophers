@@ -50,8 +50,8 @@ typedef struct s_info
 	unsigned long long	eat_time;
 	unsigned long long	sleep_time;
 	unsigned long long	meal_num;
-	unsigned long long	time;
 	pthread_mutex_t		print;
+	pthread_mutex_t		data;
 	pthread_t			monitor_id;
 	t_philo				*philo;
 	t_philo				*tmp;
@@ -61,7 +61,9 @@ int					create_info(t_info **info);
 int					check_arg(t_info *info, int argc, char **argv);
 int					philo_init(t_info *info);
 int					join_philo(t_info *info);
-int					meal_count(t_philo *philo);
+int					check_meal(t_philo *philo);
+int					check_die(t_info *info);
+int					check_die_stop(t_philo *philo);
 int					err_msg(int err);
 int					err_free(t_info *info, int err);
 int					err_join_destroy_free(t_info *info, int err);
@@ -77,11 +79,11 @@ void				fork_destroy(t_info *info, t_philo *philo);
 void				free_list(t_philo *philo);
 void				ft_putstr_fd(char *s, int fd);
 
-t_philo				*create_philo(t_info *info, t_philo *philo);
+// t_philo				*create_philo(t_info *info, t_philo *philo);
 
 char				*ft_itoa_ph(t_info *info, unsigned long long n);
 
-unsigned long long	timestamp(t_info *info);
+unsigned long long	timestamp();
 unsigned long long	ft_atoi_ph(t_info *info, const char *str);
 
 #endif

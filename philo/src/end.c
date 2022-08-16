@@ -38,6 +38,7 @@ void	fork_destroy(t_info *info, t_philo *philo)
 void	destroy_free(t_info *info)
 {
 	pthread_mutex_destroy(&info->print);
+	pthread_mutex_destroy(&info->data);
 	fork_destroy(info, info->philo);
 	if (info)
 	{
@@ -47,34 +48,17 @@ void	destroy_free(t_info *info)
 	}
 }
 
-static void	unlock_fork(t_info *info)
-{
-	unsigned long long	i;
-
-	i = 0;
-	info->tmp = info->philo;
-	if (info->philo_num == 1)
-		pthread_mutex_unlock(&info->philo->left_fork);
-	while (i < info->philo_num)
-	{
-		pthread_mutex_unlock(&info->tmp->left_fork);
-		info->tmp = info->tmp->next;
-		i++;
-	}
-}
-
 int	join_philo(t_info *info)
 {
 	unsigned long long	i;
 
 	i = 0;
-	info->tmp = info->philo;
 	if (pthread_join(info->monitor_id, NULL))
 	{
 		info->err = 8;
 		return (1);
 	}
-	unlock_fork(info);
+	info->tmp = info->philo;
 	while (i < info->philo_num)
 	{
 		if (pthread_join(info->tmp->id, NULL))

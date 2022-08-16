@@ -18,7 +18,15 @@ NAME = philo
 
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror -pthread -g3
+ifeq ($(DMEM),1)
+MEM = -fsanitize=address -g
+endif
+
+ifeq ($(DTHREAD),1)
+THREAD = -fsanitize=thread -g
+endif
+
+CFLAGS = -Wall -Wextra -Werror -pthread -g3 
 
 INCLUDE = -I include/
 
@@ -28,9 +36,9 @@ SRCDIR = src/
 OBJDIR = obj/
 
 SRC = philo.c \
-		arg.c create.c init.c \
+		arg.c init.c time.c\
 		simulation.c monitor.c \
-		error.c end.c\
+		check.c error.c end.c\
 		utils1.c utils2.c
 
 # BONUS = 
@@ -44,11 +52,11 @@ all: $(NAME)
 
 $(OBJDIR)%.o : $(SRCDIR)%.c
 		@mkdir -p $(@D)
-		$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+		$(CC) $(CFLAGS) $(MEM) $(THREAD) $(INCLUDE) -c $< -o $@
 
 $(NAME) : $(P_OBJ)
 		@echo -n "Compiling philo"
-		@$(CC) $(CFLAGS) $(INCLUDE) $(P_OBJ) -o $@
+		@$(CC) $(CFLAGS) $(MEM) $(THREAD) $(INCLUDE) $(P_OBJ) -o $@
 		@echo $(GREEN)"\t\tOK"$(RESET)
 
 # bonus: $(B_OBJ)
@@ -65,5 +73,5 @@ fclean: clean
 re: fclean
 	make all
 
-.PHONY: all bonus clean fclean re
+.PHONY: all clean fclean re
 

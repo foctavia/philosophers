@@ -53,7 +53,6 @@ int	main(int argc, char **argv)
 			return (0);
 		}
 	}
-	// printf("time to die %llu, time to eat %llu, time to sleep %llu\n", info->die_time, info->eat_time, info->sleep_time);
 	if (philo_init(info))
 		return (err_destroy_free(info, info->err));
 	if (philo(info))

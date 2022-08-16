@@ -12,33 +12,43 @@
 
 #include "philo.h"
 
+void	ft_log(t_info *info, int num, char *str)
+{
+	pthread_mutex_lock(&info->print);
+	if (!check_die(info) || !ft_strcmp(str, "died"))
+		printf("%llu %d %s\n", timestamp(), num, str);
+	pthread_mutex_unlock(&info->print);
+}
+
 static void	is_dying(t_info *info, t_philo *tmp)
 {
+	pthread_mutex_lock(&info->data);
 	*tmp->dead = 1;
+	pthread_mutex_unlock(&info->data);
 	ft_log(info, tmp->num, "died");
+	pthread_mutex_lock(&info->data);
 	while (!tmp->stop)
 	{
 		tmp->stop = 1;
 		tmp = tmp->next;
 	}
+	pthread_mutex_unlock(&info->data);
 }
 
 void	*monitor(void *arg)
 {
-	t_info	*info;
+	t_info				*info;
+	unsigned long long	last_meal;
 
 	info = ((t_info *)arg);
 	info->tmp = info->philo;
 	while (!info->dead && !info->tmp->stop)
 	{
-		// pthread_mutex_lock(&info->print);
-		// printf("no. %llu, time is %llu, last meal is %llu, minus is %llu\n", info->tmp->num, info->time, info->tmp->last_meal, info->time - info->tmp->last_meal);
-		// pthread_mutex_unlock(&info->print);
-		if ((info->time - info->tmp->last_meal) > info->die_time && (info->time - info->tmp->last_meal) > 0)
+		pthread_mutex_lock(&info->data);
+		last_meal = info->tmp->last_meal;
+		pthread_mutex_unlock(&info->data);
+		if ((timestamp() - last_meal) > info->die_time)
 		{
-			// pthread_mutex_lock(&info->print);
-			// printf("no. %llu, time is %llu, last meal is %llu, minus is %llu\n", info->tmp->num, info->time, info->tmp->last_meal, info->time - info->tmp->last_meal);
-			// pthread_mutex_unlock(&info->print);
 			is_dying(info, info->tmp);
 			return (NULL);
 		}
@@ -46,27 +56,3 @@ void	*monitor(void *arg)
 	}
 	return (NULL);
 }
-
-// void	*waiter(void *arg)
-// {
-// 	t_info	*info;
-
-// 	info = ((t_info *)arg);
-// 	info->tmp = info->philo;
-// 	while (!info->dead && !info->tmp->stop)
-// 	{
-// 		if (info->tmp->num % 2)
-// 		{
-// 			if (info->philo_num % 2 && info->tmp->num == info->philo_num)
-// 				info->tmp->sig = 0;
-// 			else
-// 				info->tmp->sig = 1;
-// 		}
-// 		else
-// 			info->tmp->sig = 0;
-// 		if (timestamp(info) >= info->eat_time)
-// 			info->tmp->sig++;
-// 		info->tmp = info->tmp->next;
-// 	}
-// 	return (NULL);
-// }

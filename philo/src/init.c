@@ -12,22 +12,68 @@
 
 #include "philo.h"
 
-unsigned long long	timestamp(t_info *info)
+int	create_info(t_info **info)
 {
-	static int				init;
-	static struct timeval	start;
-	struct timeval			check;
+	*info = (t_info *) malloc(sizeof(t_info));
+	if (!(*info))
+		return (err_msg(-1));
+	(*info)->err = 0;
+	(*info)->dead = 0;
+	(*info)->philo_num = 0;
+	(*info)->die_time = 0;
+	(*info)->eat_time = 0;
+	(*info)->sleep_time = 0;
+	(*info)->meal_num = 0;
+	(*info)->philo = NULL;
+	(*info)->tmp = NULL;
+	return (0);
+}
 
-	if (init == 0)
+static void	add_philo(t_philo **ph1, t_philo *ph2)
+{
+	t_philo	*tmp;
+
+	if (*ph1 == NULL)
 	{
-		gettimeofday(&start, NULL);
-		init++;
-		return (0);
+		*ph1 = ph2;
+		return ;
 	}
-	gettimeofday(&check, NULL);
-	info->time = ((check.tv_sec * 1000) + (check.tv_usec / 1000))
-		- ((start.tv_sec * 1000) + (start.tv_usec / 1000));
-	return (info->time);
+	tmp = *ph1;
+	while (tmp->next != *ph1)
+		tmp = tmp->next;
+	tmp->next = ph2;
+	ph2->prev = tmp;
+	ph2->next = *ph1;
+	(*ph1)->prev = ph2;
+}
+
+static t_philo	*create_philo(t_info *info, t_philo *philo)
+{
+	t_philo				*tmp;
+	unsigned long long	i;
+
+	i = 0;
+	while (i < info->philo_num)
+	{
+		tmp = (t_philo *) malloc(sizeof(t_philo));
+		if (!tmp)
+		{
+			info->err = -1;
+			return (NULL);
+		}
+		tmp->num = i + 1;
+		tmp->last_meal = 0;
+		tmp->meal_count = 0;
+		tmp->dead = &info->dead;
+		tmp->stop = 0;
+		tmp->next = tmp;
+		tmp->prev = tmp;
+		tmp->info = info;
+		add_philo(&philo, tmp);
+		tmp = NULL;
+		i++;
+	}
+	return (philo);
 }
 
 static int	fork_init(t_info *info, t_philo *philo)
@@ -60,8 +106,13 @@ static int	fork_init(t_info *info, t_philo *philo)
 
 int	philo_init(t_info *info)
 {
-	timestamp(info);
+	timestamp();
 	if (pthread_mutex_init(&info->print, NULL))
+	{
+		info->err = 6;
+		return (1);
+	}
+	if (pthread_mutex_init(&info->data, NULL))
 	{
 		info->err = 6;
 		return (1);
