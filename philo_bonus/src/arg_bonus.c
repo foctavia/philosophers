@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   arg.c                                              :+:      :+:    :+:   */
+/*   arg_bonus.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: foctavia <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/08/05 14:58:51 by foctavia          #+#    #+#             */
-/*   Updated: 2022/08/05 15:47:47 by foctavia         ###   ########.fr       */
+/*   Created: 2022/08/17 10:49:14 by foctavia          #+#    #+#             */
+/*   Updated: 2022/08/17 10:49:16 by foctavia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 static void	check_value(t_info *info, char *str)
 {
@@ -20,8 +20,6 @@ static void	check_value(t_info *info, char *str)
 	int					j;
 
 	tmp = ft_atoi_ph(info, str);
-	if (info->err)
-		return ;
 	s = ft_itoa_ph(info, tmp);
 	i = 0;
 	j = 0;
@@ -31,12 +29,15 @@ static void	check_value(t_info *info, char *str)
 		i++;
 	while (str[i] && str[i] == '0' && str[i + 1] != '\0')
 		i++;
-	if (!info->err && ft_strcmp(&s[j], &str[i]))
-		info->err = 4;
+	if (ft_strcmp(&s[j], &str[i]))
+	{
+		free(s);
+		err_free(info, 4);
+	}
 	free(s);
 }
 
-static int	validate_arg(t_info *info, int argc, char **argv)
+static void	validate_arg(t_info *info, int argc, char **argv)
 {
 	int	i;
 	int	j;
@@ -45,52 +46,39 @@ static int	validate_arg(t_info *info, int argc, char **argv)
 	while (i < argc)
 	{
 		j = 0;
-		if (!info->err && argv[i][0] == '\0')
-			info->err = 2;
+		if (argv[i][0] == '\0')
+			err_free(info, 2);
 		while (argv[i][j] && argv[i][j] == ' ')
 			j++;
 		if (argv[i][j] && (argv[i][j] == '+' || argv[i][j] == '-'))
 			j++;
 		while (argv[i][j])
 		{
-			if (!info->err && ft_isdigit(argv[i][j]) == 0)
-				info->err = 3;
+			if (ft_isdigit(argv[i][j]) == 0)
+				err_free(info, 3);
 			j++;
 		}
 		check_value(info, argv[i]);
-		if (info->err)
-			return (1);
 		i++;
 	}
-	return (0);
 }
 
-static int	parse_arg(t_info *info, int argc, char **argv)
+static void	parse_arg(t_info *info, int argc, char **argv)
 {
 	info->philo_num = ft_atoi_ph(info, argv[1]);
 	if (info->philo_num < 1)
-	{
-		info->err = 5;
-		return (1);
-	}
+		err_free(info, 5);
 	info->die_time = ft_atoi_ph(info, argv[2]);
 	info->eat_time = ft_atoi_ph(info, argv[3]);
 	info->sleep_time = ft_atoi_ph(info, argv[4]);
 	if (argc == 6)
 		info->meal_num = ft_atoi_ph(info, argv[5]);
-	return (0);
 }
 
-int	check_arg(t_info *info, int argc, char **argv)
+void	check_arg(t_info *info, int argc, char **argv)
 {
 	if (argc > 6 || argc < 5)
-	{
-		info->err = 1;
-		return (1);
-	}
-	if (validate_arg(info, argc, argv))
-		return (1);
-	if (parse_arg(info, argc, argv))
-		return (1);
-	return (0);
+		err_free(info, 1);
+	validate_arg(info, argc, argv);
+	parse_arg(info, argc, argv);
 }

@@ -53,17 +53,12 @@ int	join_philo(t_info *info)
 	unsigned long long	i;
 
 	i = 0;
-	if (pthread_join(info->monitor_id, NULL))
-	{
-		info->err = 8;
-		return (1);
-	}
 	info->tmp = info->philo;
 	while (i < info->philo_num)
 	{
 		if (pthread_join(info->tmp->id, NULL))
 		{
-			info->err = 8;
+			info->err = 9;
 			return (1);
 		}
 		info->tmp = info->tmp->next;

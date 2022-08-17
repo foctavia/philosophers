@@ -29,11 +29,6 @@ int	philo(t_info *info)
 		info->tmp = info->tmp->next;
 		i++;
 	}
-	if (pthread_create(&info->monitor_id, NULL, &monitor, (void *)info))
-	{
-		info->err = 7;
-		return (1);
-	}
 	return (0);
 }
 
@@ -56,6 +51,8 @@ int	main(int argc, char **argv)
 	if (philo_init(info))
 		return (err_destroy_free(info, info->err));
 	if (philo(info))
+		return (err_join_destroy_free(info, info->err));
+	if (create_monitor(info))
 		return (err_join_destroy_free(info, info->err));
 	if (join_philo(info))
 		return (err_join_destroy_free(info, info->err));

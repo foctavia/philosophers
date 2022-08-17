@@ -60,6 +60,7 @@ typedef struct s_info
 int					create_info(t_info **info);
 int					check_arg(t_info *info, int argc, char **argv);
 int					philo_init(t_info *info);
+int					create_monitor(t_info *info);
 int					join_philo(t_info *info);
 int					check_meal(t_philo *philo);
 int					check_die(t_info *info);
@@ -79,11 +80,9 @@ void				fork_destroy(t_info *info, t_philo *philo);
 void				free_list(t_philo *philo);
 void				ft_putstr_fd(char *s, int fd);
 
-// t_philo				*create_philo(t_info *info, t_philo *philo);
-
 char				*ft_itoa_ph(t_info *info, unsigned long long n);
 
-unsigned long long	timestamp();
+unsigned long long	timestamp(void);
 unsigned long long	ft_atoi_ph(t_info *info, const char *str);
 
 #endif

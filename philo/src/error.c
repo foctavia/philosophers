@@ -29,9 +29,11 @@ int	err_msg(int err)
 	else if (err == 6)
 		ft_putstr_fd("Error: Failed to initiate mutex\n", 2);
 	else if (err == 7)
-		ft_putstr_fd("Error: Failed to create thread\n", 2);
+		ft_putstr_fd("Error: Failed to create a thread\n", 2);
 	else if (err == 8)
-		ft_putstr_fd("Error: Failed to join thread\n", 2);
+		ft_putstr_fd("Error: Failed to detach a thread\n", 2);
+	else if (err == 9)
+		ft_putstr_fd("Error: Failed to join a thread\n", 2);
 	return (1);
 }
 
@@ -65,6 +67,7 @@ int	err_destroy_free(t_info *info, int err)
 {
 	err_msg(err);
 	pthread_mutex_destroy(&info->print);
+	pthread_mutex_destroy(&info->data);
 	fork_destroy(info, info->philo);
 	if (info)
 	{
@@ -80,6 +83,7 @@ int	err_join_destroy_free(t_info *info, int err)
 	err_msg(err);
 	join_philo(info);
 	pthread_mutex_destroy(&info->print);
+	pthread_mutex_destroy(&info->data);
 	fork_destroy(info, info->philo);
 	if (info)
 	{

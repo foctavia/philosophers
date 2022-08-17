@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   error_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: foctavia <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/08/05 14:59:33 by foctavia          #+#    #+#             */
-/*   Updated: 2022/08/05 14:59:35 by foctavia         ###   ########.fr       */
+/*   Created: 2022/08/17 10:49:46 by foctavia          #+#    #+#             */
+/*   Updated: 2022/08/17 10:49:49 by foctavia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 int	err_msg(int err)
 {
@@ -27,11 +27,13 @@ int	err_msg(int err)
 	else if (err == 5)
 		ft_putstr_fd("Error: Invalid number of philosopher\n", 2);
 	else if (err == 6)
-		ft_putstr_fd("Error: Failed to initiate mutex\n", 2);
+		ft_putstr_fd("Error: Failed to open a semaphore\n", 2);
 	else if (err == 7)
-		ft_putstr_fd("Error: Failed to create thread\n", 2);
+		ft_putstr_fd("Error: Failed to fork a process\n", 2);
 	else if (err == 8)
-		ft_putstr_fd("Error: Failed to join thread\n", 2);
+		ft_putstr_fd("Error: Failed to create a thread\n", 2);
+	else if (err == 9)
+		ft_putstr_fd("Error: Failed to detach a thread\n", 2);
 	return (1);
 }
 
@@ -53,39 +55,36 @@ void	free_list(t_philo *philo)
 	}
 }
 
-int	err_free(t_info *info, int err)
+void	err_free(t_info *info, int err)
 {
-	err_msg(err);
 	if (info)
 		free(info);
-	return (1);
+	exit (err_msg(err));
 }
 
-int	err_destroy_free(t_info *info, int err)
+void	err_kill_free(t_info *info, int err)
 {
-	err_msg(err);
-	pthread_mutex_destroy(&info->print);
-	fork_destroy(info, info->philo);
+	unsigned long long	i;
+
+	i = 0;
+	sem_close(info->print);
+	sem_unlink("print");
+	sem_close(info->data);
+	sem_unlink("data");
+	sem_close(info->fork);
+	sem_unlink("fork");
+	info->tmp = info->philo;
+	while (i < info->philo_num)
+	{
+		kill(info->tmp->id, SIGTERM);
+		info->tmp = info->tmp->next;
+		i++;
+	}
 	if (info)
 	{
 		if (info->philo)
 			free_list(info->philo);
 		free(info);
 	}
-	return (1);
-}
-
-int	err_join_destroy_free(t_info *info, int err)
-{
-	err_msg(err);
-	join_philo(info);
-	pthread_mutex_destroy(&info->print);
-	fork_destroy(info, info->philo);
-	if (info)
-	{
-		if (info->philo)
-			free_list(info->philo);
-		free(info);
-	}
-	return (1);
+	exit (err_msg(err));
 }

@@ -12,14 +12,6 @@
 
 #include "philo.h"
 
-void	ft_log(t_info *info, int num, char *str)
-{
-	pthread_mutex_lock(&info->print);
-	if (!check_die(info) || !ft_strcmp(str, "died"))
-		printf("%llu %d %s\n", timestamp(), num, str);
-	pthread_mutex_unlock(&info->print);
-}
-
 static void	is_dying(t_info *info, t_philo *tmp)
 {
 	pthread_mutex_lock(&info->data);
@@ -38,21 +30,37 @@ static void	is_dying(t_info *info, t_philo *tmp)
 void	*monitor(void *arg)
 {
 	t_info				*info;
+	t_philo				*tmp;
 	unsigned long long	last_meal;
 
 	info = ((t_info *)arg);
-	info->tmp = info->philo;
-	while (!info->dead && !info->tmp->stop)
+	tmp = info->philo;
+	while (!check_die_stop(tmp))
 	{
 		pthread_mutex_lock(&info->data);
-		last_meal = info->tmp->last_meal;
+		last_meal = tmp->last_meal;
 		pthread_mutex_unlock(&info->data);
 		if ((timestamp() - last_meal) > info->die_time)
 		{
-			is_dying(info, info->tmp);
+			is_dying(info, tmp);
 			return (NULL);
 		}
-		info->tmp = info->tmp->next;
+		tmp = tmp->next;
 	}
 	return (NULL);
+}
+
+int	create_monitor(t_info *info)
+{
+	if (pthread_create(&info->monitor_id, NULL, &monitor, (void *)info))
+	{
+		info->err = 7;
+		return (1);
+	}
+	if (pthread_detach(info->monitor_id))
+	{
+		info->err = 8;
+		return (1);
+	}
+	return (0);
 }

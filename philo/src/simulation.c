@@ -12,6 +12,14 @@
 
 #include "philo.h"
 
+void	ft_log(t_info *info, int num, char *str)
+{
+	pthread_mutex_lock(&info->print);
+	if (!check_die(info) || !ft_strcmp(str, "died"))
+		printf("%llu %d %s\n", timestamp(), num, str);
+	pthread_mutex_unlock(&info->print);
+}
+
 static void	is_leftie(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->left_fork);
@@ -80,7 +88,7 @@ void	*simulation(void *arg)
 		if (check_die_stop(philo))
 			return (NULL);
 		ft_log(philo->info, philo->num, "is thinking");
-		usleep(350);
+		usleep(300);
 	}
 	return (NULL);
 }

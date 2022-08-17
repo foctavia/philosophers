@@ -35,11 +35,11 @@ RM = rm -rf
 SRCDIR = src/
 OBJDIR = obj/
 
-SRC = philo.c \
-		arg.c init.c time.c\
-		simulation.c monitor.c \
-		check.c error.c end.c\
-		utils1.c utils2.c
+SRC = philo_bonus.c \
+		arg_bonus.c init_bonus.c time_bonus.c\
+		simulation_bonus.c monitor_bonus.c \
+		check_bonus.c error_bonus.c end_bonus.c\
+		utils1_bonus.c utils2_bonus.c
 
 P_SRC = $(addprefix $(SRCDIR), $(SRC))
 P_OBJ = $(addprefix $(OBJDIR), $(SRC:.c=.o))

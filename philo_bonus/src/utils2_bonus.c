@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils2.c                                           :+:      :+:    :+:   */
+/*   utils2_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: foctavia <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/08/05 16:01:32 by foctavia          #+#    #+#             */
-/*   Updated: 2022/08/05 16:01:38 by foctavia         ###   ########.fr       */
+/*   Created: 2022/08/17 10:51:07 by foctavia          #+#    #+#             */
+/*   Updated: 2022/08/17 10:51:11 by foctavia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 static int	nbrlen(unsigned long long n)
 {
@@ -39,11 +39,8 @@ char	*ft_itoa_ph(t_info *info, unsigned long long n)
 
 	len = nbrlen(n);
 	str = malloc(sizeof(char) * (len + 1));
-	if (!str && !info->err)
-	{
-		info->err = -1;
-		return (NULL);
-	}
+	if (!str)
+		err_free(info, -1);
 	putnbr(n, str, len - 1);
 	str[len] = '\0';
 	return (str);
