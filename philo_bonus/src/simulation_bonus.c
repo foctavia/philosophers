@@ -26,7 +26,7 @@ static void	is_eating(t_philo *philo)
 	ft_log(philo->info, philo->num, "has taken a fork");
 	if (philo->info->philo_num == 1)
 	{
-		ft_usleep(philo->info->die_time);
+		ft_usleep(philo->info->die_time + 5);
 		sem_post(philo->info->fork);
 		return ;
 	}
