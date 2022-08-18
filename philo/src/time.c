@@ -30,3 +30,22 @@ unsigned long long	timestamp(void)
 		- ((start.tv_sec * 1000) + (start.tv_usec / 1000));
 	return (time);
 }
+
+void	ft_usleep(unsigned long long time)
+{
+	struct timeval		start;
+	struct timeval		check;
+	unsigned long long	start_time;
+	unsigned long long	check_time;
+
+	gettimeofday(&start, NULL);
+	start_time = (start.tv_sec * 1000) + (start.tv_usec / 1000);
+	while (1)
+	{
+		gettimeofday(&check, NULL);
+		check_time = (check.tv_sec * 1000) + (check.tv_usec / 1000);
+		if (check_time - start_time >= time)
+			break ;
+		usleep(100);
+	}
+}

@@ -29,6 +29,7 @@ void	*monitor(void *arg)
 	philo = ((t_philo *)arg);
 	while (!check_die_stop(philo))
 	{
+		usleep(200);
 		sem_wait(philo->info->data);
 		last_meal = philo->last_meal;
 		sem_post(philo->info->data);

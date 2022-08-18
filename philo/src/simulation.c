@@ -26,24 +26,18 @@ static void	is_leftie(t_philo *philo)
 	ft_log(philo->info, philo->num, "has taken a fork");
 	if (philo->info->philo_num == 1)
 	{
-		usleep(philo->info->die_time * 1000);
+		ft_usleep(philo->info->die_time);
 		pthread_mutex_unlock(&philo->left_fork);
 		return ;
 	}
 	pthread_mutex_lock(philo->right_fork);
 	ft_log(philo->info, philo->num, "has taken a fork");
-	if (check_die_stop(philo))
-	{
-		pthread_mutex_unlock(&philo->left_fork);
-		pthread_mutex_unlock(philo->right_fork);
-		return ;
-	}
 	pthread_mutex_lock(&philo->info->data);
 	philo->last_meal = timestamp();
 	pthread_mutex_unlock(&philo->info->data);
 	philo->meal_count++;
 	ft_log(philo->info, philo->num, "is eating");
-	usleep(philo->info->eat_time * 1000);
+	ft_usleep(philo->info->eat_time);
 	pthread_mutex_unlock(&philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
 }
@@ -54,18 +48,12 @@ static void	is_rightie(t_philo *philo)
 	ft_log(philo->info, philo->num, "has taken a fork");
 	pthread_mutex_lock(&philo->left_fork);
 	ft_log(philo->info, philo->num, "has taken a fork");
-	if (check_die_stop(philo))
-	{
-		pthread_mutex_unlock(philo->right_fork);
-		pthread_mutex_unlock(&philo->left_fork);
-		return ;
-	}
 	pthread_mutex_lock(&philo->info->data);
 	philo->last_meal = timestamp();
 	pthread_mutex_unlock(&philo->info->data);
 	philo->meal_count++;
 	ft_log(philo->info, philo->num, "is eating");
-	usleep(philo->info->eat_time * 1000);
+	ft_usleep(philo->info->eat_time);
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(&philo->left_fork);
 }
@@ -84,11 +72,11 @@ void	*simulation(void *arg)
 		if (check_meal(philo) || check_die_stop(philo))
 			return (NULL);
 		ft_log(philo->info, philo->num, "is sleeping");
-		usleep(philo->info->sleep_time * 1000);
+		ft_usleep(philo->info->sleep_time);
 		if (check_die_stop(philo))
 			return (NULL);
 		ft_log(philo->info, philo->num, "is thinking");
-		usleep(300);
+		usleep(250);
 	}
 	return (NULL);
 }

@@ -26,7 +26,7 @@ static void	is_eating(t_philo *philo)
 	ft_log(philo->info, philo->num, "has taken a fork");
 	if (philo->info->philo_num == 1)
 	{
-		usleep(philo->info->die_time * 1000);
+		ft_usleep(philo->info->die_time);
 		sem_post(philo->info->fork);
 		return ;
 	}
@@ -43,7 +43,7 @@ static void	is_eating(t_philo *philo)
 	sem_post(philo->info->data);
 	philo->meal_count++;
 	ft_log(philo->info, philo->num, "is eating");
-	usleep(philo->info->eat_time * 1000);
+	ft_usleep(philo->info->eat_time);
 	sem_post(philo->info->fork);
 	sem_post(philo->info->fork);
 }
@@ -63,11 +63,11 @@ void	simulation(void *arg)
 		if (check_meal(philo) || check_die_stop(philo))
 			exit (0);
 		ft_log(philo->info, philo->num, "is sleeping");
-		usleep(philo->info->sleep_time * 1000);
+		ft_usleep(philo->info->sleep_time);
 		if (check_die_stop(philo))
 			exit (0);
 		ft_log(philo->info, philo->num, "is thinking");
-		usleep(350);
+		usleep(150);
 	}
 	exit (0);
 }

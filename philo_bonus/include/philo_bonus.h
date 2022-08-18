@@ -75,6 +75,7 @@ void				unlink_free(t_info *info);
 void				err_free(t_info *info, int err);
 void				err_kill_free(t_info *info, int err);
 void				free_list(t_philo *philo);
+void				ft_usleep(unsigned long long time);
 void				ft_putstr_fd(char *s, int fd);
 
 char				*ft_itoa_ph(t_info *info, unsigned long long n);

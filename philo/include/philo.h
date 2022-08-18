@@ -78,6 +78,7 @@ void				ft_log(t_info *info, int num, char *str);
 void				destroy_free(t_info *info);
 void				fork_destroy(t_info *info, t_philo *philo);
 void				free_list(t_philo *philo);
+void				ft_usleep(unsigned long long time);
 void				ft_putstr_fd(char *s, int fd);
 
 char				*ft_itoa_ph(t_info *info, unsigned long long n);

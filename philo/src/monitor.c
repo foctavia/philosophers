@@ -37,6 +37,7 @@ void	*monitor(void *arg)
 	tmp = info->philo;
 	while (!check_die_stop(tmp))
 	{
+		usleep(200);
 		pthread_mutex_lock(&info->data);
 		last_meal = tmp->last_meal;
 		pthread_mutex_unlock(&info->data);
